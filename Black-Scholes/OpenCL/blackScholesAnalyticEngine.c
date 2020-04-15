@@ -379,10 +379,13 @@ void runBlackScholesAnalyticEngine()
 	size_t localWorkSize[] = {12, 1};
 	size_t globalWorkSize[] = {(size_t)ceil((dataType)numVals / (dataType)localWorkSize[0])*localWorkSize[0], 1};
 
-    for(int rpt10 = 0; rpt10 < 10; ++rpt10) {
-	    printf("\nRun on GPU\n");
+	    long seconds, useconds;    
+	    dataType mtimeCpu, mtimeGpu;
 	    struct timeval start;
 	    struct timeval end;
+
+    for(int rpt10 = 0; rpt10 < 10; ++rpt10) {
+	    printf("\nRun on GPU\n");
 	    gettimeofday(&start, NULL);
 
 	    clEnqueueNDRangeKernel(clCommandQue, clKernel, 1, 0, globalWorkSize, localWorkSize,
@@ -394,10 +397,6 @@ void runBlackScholesAnalyticEngine()
 	    {
 		    printf("Error in launching kernel\n");
 	    }
-	    
-	    long seconds, useconds;    
-	    dataType mtimeCpu, mtimeGpu;
-
 
 	    seconds  = end.tv_sec  - start.tv_sec;
         	useconds = end.tv_usec - start.tv_usec;
