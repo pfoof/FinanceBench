@@ -9,7 +9,7 @@
 #define NUM_SAMPLES_BLACK_SCHOLES_ANALYTIC 200000
 
 //define the thread block size
-#define THREAD_BLOCK_SIZE 256
+#define THREAD_BLOCK_SIZE 12
 
 typedef float dataType;
 

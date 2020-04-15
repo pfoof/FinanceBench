@@ -148,7 +148,7 @@ void runBlackScholesAnalyticEngine()
 {
   	//int nSamplesArray[] = {100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000, 200000, 500000, 1000000, 2000000, 5000000, 10000000, 20000000, 50000000};
 
-	int numVals = 5000000;
+	int numVals = 750000;
 	//for (int numTime=0; numTime < 17; numTime++)
 	{
 	//int numVals = nSamplesArray[numTime];
@@ -351,6 +351,7 @@ void runBlackScholesAnalyticEngine()
 	inputOptions = clCreateBuffer(clGPUContext, CL_MEM_READ_WRITE,
                                 numVals*sizeof(optionInputStruct), NULL, NULL);
 
+	printf("Input size = %d KB\n", numVals * sizeof(optionInputStruct) / 1024);
 	resultsOutput = clCreateBuffer(clGPUContext, CL_MEM_READ_WRITE,
                                 numVals*sizeof(dataType), NULL, NULL);
 
@@ -365,7 +366,7 @@ void runBlackScholesAnalyticEngine()
 
 	//declare and allocate the input and output data on the CPU
 	dataType* outputVals = (dataType*)malloc(numVals * sizeof(dataType));
-
+	printf("OutputVals size = %d KB\n", numVals * sizeof(dataType) / 1024);
 
 	clEnqueueWriteBuffer(clCommandQue, inputOptions, CL_TRUE, 0, numVals * sizeof(optionInputStruct), (void*)values, 0, NULL, NULL);
 
@@ -375,7 +376,7 @@ void runBlackScholesAnalyticEngine()
 
 
 
-	size_t localWorkSize[] = {256, 1};
+	size_t localWorkSize[] = {12, 1};
 	size_t globalWorkSize[] = {(size_t)ceil((dataType)numVals / (dataType)localWorkSize[0])*localWorkSize[0], 1};
 
 	printf("\nRun on GPU\n");
