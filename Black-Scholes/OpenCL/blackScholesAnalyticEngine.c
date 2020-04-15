@@ -379,34 +379,35 @@ void runBlackScholesAnalyticEngine()
 	size_t localWorkSize[] = {12, 1};
 	size_t globalWorkSize[] = {(size_t)ceil((dataType)numVals / (dataType)localWorkSize[0])*localWorkSize[0], 1};
 
-	printf("\nRun on GPU\n");
-	struct timeval start;
-	gettimeofday(&start, NULL);
+    for(int rpt10 = 0; rpt10 < 10; ++rpt10) {
+	    printf("\nRun on GPU\n");
+	    struct timeval start;
+	    struct timeval end;
+	    gettimeofday(&start, NULL);
 
-	clEnqueueNDRangeKernel(clCommandQue, clKernel, 1, 0, globalWorkSize, localWorkSize,
-				                   0, NULL, NULL);
+	    clEnqueueNDRangeKernel(clCommandQue, clKernel, 1, 0, globalWorkSize, localWorkSize,
+				                       0, NULL, NULL);
+	    clFinish(clCommandQue);
+	    gettimeofday(&end, NULL);
 
-	if(errcode != CL_SUCCESS)
-	{
-		printf("Error in launching kernel\n");
-	}
-	clFinish(clCommandQue);
-	
-	long seconds, useconds;    
-	dataType mtimeCpu, mtimeGpu;
-
-
-	struct timeval end;
-	gettimeofday(&end, NULL);
-
-	seconds  = end.tv_sec  - start.tv_sec;
-    	useconds = end.tv_usec - start.tv_usec;
-
-    	mtimeGpu = ((seconds) * 1000 + ((dataType)useconds)/1000.0) + 0.5f;
+	    if(errcode != CL_SUCCESS)
+	    {
+		    printf("Error in launching kernel\n");
+	    }
+	    
+	    long seconds, useconds;    
+	    dataType mtimeCpu, mtimeGpu;
 
 
-    	printf("Processing time on GPU: %f (ms)\n", mtimeGpu);
+	    seconds  = end.tv_sec  - start.tv_sec;
+        	useconds = end.tv_usec - start.tv_usec;
 
+        	mtimeGpu = ((seconds) * 1000 + ((dataType)useconds)/1000.0) + 0.5f;
+
+
+        	printf("Processing time on GPU: %f (ms)\n", mtimeGpu);
+
+    } // end for rpt10
 
 	//copy the resulting option values back to the CPU
 	clEnqueueReadBuffer(clCommandQue, resultsOutput, CL_TRUE, 0, numVals*sizeof(dataType), (void*)outputVals, 0, NULL, NULL);
@@ -466,8 +467,7 @@ void runBlackScholesAnalyticEngine()
 int
 main( int argc, char** argv) 
 {
-    for(int i = 0; i < 10; ++i)
-    	runBlackScholesAnalyticEngine();
+  	runBlackScholesAnalyticEngine();
 	char c;
 	c = getchar();
 	printf("%c\n", c);
