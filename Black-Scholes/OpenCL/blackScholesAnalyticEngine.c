@@ -466,7 +466,8 @@ void runBlackScholesAnalyticEngine()
 int
 main( int argc, char** argv) 
 {
-	runBlackScholesAnalyticEngine();
+    for(int i = 0; i < 10; ++i)
+    	runBlackScholesAnalyticEngine();
 	char c;
 	c = getchar();
 	printf("%c\n", c);
